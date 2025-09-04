@@ -37,6 +37,22 @@ $env:IMDB_UPLOAD = '1'
 python imdb_pipeline.py
 ```
 
+Single-command run
+
+- To run the full pipeline (scrape, enrich, save JSON, convert to CSV) without uploading to BigQuery:
+
+```powershell
+python run_all.py
+```
+
+- To run and upload to BigQuery (ensure `service-account-key.json` is available and valid):
+
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS = 'service-account-key.json'
+$env:IMDB_UPLOAD = '1'
+python run_all.py
+```
+
 Notes
 - `service-account-key.json` should NOT be committed to git. It's ignored in `.gitignore`.
 - If you prefer not to keep data files in the repo, remove `imdb_top_250.json` and `imdb_top_250.csv` from the repository and add them to `.gitignore` (already added).
