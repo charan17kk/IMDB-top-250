@@ -1,78 +1,42 @@
-📌 IMDB Top 250 Web Scraper + BigQuery Pipeline
-🎯 Objective
+IMDB Top 250 scraper
 
-This project scrapes the IMDB Top 250 Movies data and builds a small data pipeline that:
+Files
+- `imdb_pipeline.py` — Scrapes IMDB Top 250, enriches each movie with year and rating, optionally uploads to BigQuery when `IMDB_UPLOAD=1` and `GOOGLE_APPLICATION_CREDENTIALS` is set.
+- `convert_to_csv.py` — Converts `imdb_top_250.json` into `imdb_top_250.csv` with HTML entities unescaped.
+- `reorder_bq.py` — Replaces BigQuery table with an ordered copy by `rank`.
 
-Extracts movie details (Rank, Title, Year, Rating, URL).
+Quick start (PowerShell)
 
-Saves the data locally (CSV/JSON).
+1) Create & activate virtualenv
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
 
-Loads the structured data into Google BigQuery.
-
-⚙️ Approach
-
-Scraping
-
-Used requests + BeautifulSoup to fetch the IMDB Top 250 page.
-
-Parsed HTML to extract required fields for each movie.
-
-Stored results into a Pandas DataFrame.
-
-Local Storage
-
-Exported the DataFrame into movies.csv for portability.
-
-BigQuery Loading
-
-Created a dataset (imdb_dataset) and table (top_250_movies) in BigQuery.
-
-Used google-cloud-bigquery Python client to upload CSV data.
-
-Defined schema:
-
-rank → INT
-
-title → STRING
-
-year → INT
-
-rating → FLOAT
-
-url → STRING
-
-🚀 How to Run
-1️⃣ Install dependencies
+2) Install dependencies
+```powershell
+pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-2️⃣ Run scraper
-python scraper.py
+3) Run scraper (no upload)
+```powershell
+python imdb_pipeline.py
+```
 
+4) Convert JSON -> CSV
+```powershell
+python convert_to_csv.py
+Get-Content -Path imdb_top_250.csv -TotalCount 10
+```
 
-➡ Generates movies.csv
+5) Upload to BigQuery (optional)
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS = 'service-account-key.json'
+$env:IMDB_UPLOAD = '1'
+python imdb_pipeline.py
+```
 
-3️⃣ Load into BigQuery
-python load_to_bq.py
-
-
-Make sure your Google Cloud credentials are set:
-
-export GOOGLE_APPLICATION_CREDENTIALS="path/to/service_account.json"
-
-⚡ Challenges & Solutions
-
-Dynamic page structure → Verified HTML tags using Developer Tools to avoid scraping errors.
-
-BigQuery schema mismatch → Explicitly cast data types (int, float) before upload.
-
-Authentication → Used a service account JSON key for secure access.
-
-✅ Deliverables
-
-scraper.py → Extracts and saves IMDB data.
-
-load_to_bq.py → Uploads CSV to BigQuery.
-
-movies.csv → Sample extracted dataset.
-
-BigQuery table: imdb_dataset.top_250_movies
+Notes
+- `service-account-key.json` should NOT be committed to git. It's ignored in `.gitignore`.
+- If you prefer not to keep data files in the repo, remove `imdb_top_250.json` and `imdb_top_250.csv` from the repository and add them to `.gitignore` (already added).

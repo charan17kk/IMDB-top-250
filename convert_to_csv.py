@@ -1,5 +1,6 @@
 import json
 import csv
+import html
 
 json_path = 'imdb_top_250.json'
 csv_path = 'imdb_top_250.csv'
@@ -16,7 +17,8 @@ with open(json_path, 'r', encoding='utf-8') as jf, open(csv_path, 'w', newline='
         except Exception:
             continue
         rank = obj.get('rank', '')
-        title = obj.get('title', '')
+        # unescape HTML entities in title
+        title = html.unescape(obj.get('title', '') or '')
         year = obj.get('year', '')
         rating = obj.get('rating', '')
         movie_url = obj.get('movie_url', '')

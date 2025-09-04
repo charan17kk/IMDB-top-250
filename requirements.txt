@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+pandas
+google-cloud-bigquery
+urllib3
+pandas-gbq
